@@ -1,0 +1,41 @@
+#ifndef SORTING_HPP
+#define SORTING_HPP
+
+#include <functional>
+#include "command_line.hpp"
+
+#define TIMER() Timer timer(__func__, debug)
+
+#define RUN_SORT(sorter, method, data, size) \
+	(sorter).run_sort([&sorter](int *a, int n) { (sorter).method(a, n); }, (data), (size))
+
+class Timer
+{
+private:
+	std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
+	std::string func_name;
+	bool debug;
+
+public:
+	Timer(const std::string &name, const bool &_debug);
+	~Timer();
+};
+
+class Sorting
+{
+private:
+	bool debug;
+
+public:
+	Sorting(const bool &_debug = false);
+
+	void bubble_sort(int *a, int n);
+	void selection_sort(int *a, int n);
+	void insertion_sort(int *a, int n);
+	void run_sort(std::function<void(int *, int)> sort_func, const int *origin_arr, const int &n);
+	void print(int *a, int n);
+
+	~Sorting();
+};
+
+#endif // SORTING_HPP
