@@ -2,6 +2,8 @@
 #define SORTING_HPP
 
 #include <functional>
+#include <mutex>
+
 #include "command_line.hpp"
 
 #define TIMER() Timer timer(__func__, debug)
@@ -9,9 +11,15 @@
 #define RUN_SORT(sorter, method, data, size) \
 	(sorter).run_sort([&sorter](int *a, int n) { (sorter).method(a, n); }, (data), (size))
 
+#define THREAD_RUN(name_thread, sorter, sort_method, arr, size) \
+	std::thread name_thread([&sorter, arr, size]() { \
+		RUN_SORT(sorter, sort_method, arr, size); \
+	})
+
 class Timer
 {
 private:
+	static std::mutex cout_mutex;
 	std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 	std::string func_name;
 	bool debug;
@@ -24,6 +32,7 @@ public:
 class Sorting
 {
 private:
+	static std::mutex cout_mutex;
 	bool debug;
 
 public:
@@ -32,6 +41,8 @@ public:
 	void bubble_sort(int *a, int n);
 	void selection_sort(int *a, int n);
 	void insertion_sort(int *a, int n);
+	void heapify(int* a, int n, int i);
+	void heap_sort(int *a, int n);
 	void run_sort(std::function<void(int *, int)> sort_func, const int *origin_arr, const int &n);
 	void print(int *a, int n);
 
