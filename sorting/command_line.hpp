@@ -26,7 +26,7 @@ class CommandLine
 public:
 	CommandArgs parser(const int &argc, char *argv[]);
 	void help_print(const std::string &name);
-	void init_arr(int *&sort_arr, const int &random_n, int &n);
+	void init_arr(int *&sort_arr, const size_t &random_n, int &n);
 };
 
 #endif // COMMAND_LINE_HPP

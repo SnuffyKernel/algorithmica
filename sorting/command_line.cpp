@@ -37,8 +37,8 @@ CommandArgs CommandLine::parser(const int &argc, char *argv[])
 			}
 			else
 			{
-				std::cout << "Not enough arguments!" << arg << std::endl;
-				std::cout << "-r [size] or --random [size]" << arg << std::endl;
+				std::cout << "Not enough arguments! " << arg << std::endl;
+				std::cout << "-r [size] or --random [size]"<< std::endl;
 				std::cout << " size <= " << MAX_SIZE_ARR << " and >= " << MIN_SIZE_ARR << std::endl;
 			}
 		}
@@ -65,7 +65,7 @@ void CommandLine::help_print(const std::string &name)
 }
 
 
-void CommandLine::init_arr(int *&sort_arr, const int &random_n, int &n)
+void CommandLine::init_arr(int *&sort_arr, const size_t &random_n, int &n)
 {
 	if (random_n)
 	{
@@ -74,7 +74,7 @@ void CommandLine::init_arr(int *&sort_arr, const int &random_n, int &n)
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dist(1, n);
+		std::uniform_int_distribution<> dist(1, random_n * random_n);
 
 		for (int i = 0; i < n; i++)
 		{

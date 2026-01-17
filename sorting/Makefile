@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -Werror
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -O3
 SRCS = sorting.cpp command_line.cpp
 OBJS = $(SRCS:.cpp=.o)
 

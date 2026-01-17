@@ -2,6 +2,7 @@
 #include <chrono>
 #include <functional>
 #include <thread>
+#include <algorithm>
 
 #include "sorting.hpp"
 
@@ -111,7 +112,52 @@ void Sorting::heap_sort(int *a, int n)
 	}
 }
 
-void Sorting::run_sort(std::function<void(int *, int)> sort_func, const int *origin_arr, const int &n)
+int Sorting::relative_support_element(int *a,int low, int high)
+{
+	int relative = a[high];
+	int i = low - 1;
+
+	for (int j = low; j < high; j++)
+	{
+		if (a[j] <= relative)
+		{
+			i++;
+			Utils::swap(a[i], a[j]);
+		}
+	}
+
+	Utils::swap(a[i + 1], a[high]);
+
+	return i + 1;
+}
+
+void Sorting::quick_sort_recurs(int *a, int low, int high)
+{
+	 if (low < high)
+	 {
+		int p = relative_support_element(a, low, high);
+		
+
+		quick_sort_recurs(a, low, p - 1);
+		quick_sort_recurs(a, p + 1, high);
+	 }
+}
+
+void Sorting::quick_sort(int *a, int n)
+{
+	TIMER();
+
+	quick_sort_recurs(a, 0, n - 1);
+}
+
+void Sorting::std_sort(int *a, int n)
+{
+	TIMER();
+
+	std::sort(a , a + n);
+}
+
+void Sorting::tread_run_sort(std::function<void(int *, int)> sort_func, int *origin_arr, const int &n)
 {
 	int *sort_arr = new int[n];
 
@@ -134,7 +180,7 @@ void Sorting::print(int *a, int n)
 
 Sorting::~Sorting() {}
 
-void run_all_func_thread(Sorting &sort, int *origin_arr, const int &size)
+void Sorting::thread_run_all_sort(Sorting &sort, int *origin_arr, const int &size)
 {
 	typedef void (Sorting::*SortMethodPtr)(int *, int);
 
@@ -143,7 +189,9 @@ void run_all_func_thread(Sorting &sort, int *origin_arr, const int &size)
 		&Sorting::bubble_sort,
 		&Sorting::selection_sort,
 		&Sorting::insertion_sort,
-		&Sorting::heap_sort
+		&Sorting::heap_sort,
+		&Sorting::quick_sort,
+		&Sorting::std_sort
 	};
 
 	std::vector<std::thread> threads;
@@ -152,7 +200,7 @@ void run_all_func_thread(Sorting &sort, int *origin_arr, const int &size)
 	{
 		threads.emplace_back([&sort, origin_arr, size, method = methods[i]]()
 		{
-			sort.run_sort([&sort, method](int *a, int n)
+			sort.tread_run_sort([&sort, method](int *a, int n)
 			{
 				(sort.*method)(a, n);
 			}, origin_arr, size);
@@ -177,11 +225,11 @@ int main(int argc, char *argv[])
 
 	Sorting sort(commandArgs.debug);
 
-	run_all_func_thread(sort, origin_arr, n);
+	sort.thread_run_all_sort(sort, origin_arr, n);
 
-	//THREAD_RUN(t1, sort, bubble_sort, origin_arr, n);
-
-	//t1.join();
+	// THREAD_RUN(t1, sort, quick_sort, origin_arr, n);
+	// t1.join();
+	// RUN_SORT(sort, quick_sort, origin_arr, n);
 
 	if (!commandArgs.not_do_print)
 	{
